@@ -1,4 +1,4 @@
-from dismod.main import main 
+from dismod.main import main
 
 if __name__ == "__main__":
     raise SystemExit(main())
