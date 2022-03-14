@@ -49,3 +49,12 @@ def search_key_in_iterable(
             (None, None),
         ),
     )
+
+
+def split_list_in_chunks(
+    elements: List[Any],
+    chunk_size: int,
+) -> Generator[Any, Any, Any]:
+    """Yield chunk_size number of striped chunks from elements."""
+    for index in range(0, chunk_size):
+        yield elements[index::chunk_size]

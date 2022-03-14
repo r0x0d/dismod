@@ -122,3 +122,46 @@ def test_search_key_in_iterable(key, value, iterable, expected):
         utils.search_key_in_iterable(key=key, value=value, iterable=iterable)
         == expected
     )
+
+
+@pytest.mark.parametrize(
+    ("elements", "chunk_size", "expected"),
+    (
+        ([1, 2, 3, 4, 5, 6, 7, 8, 10], 2, [[1, 3, 5, 7, 10], [2, 4, 6, 8]]),
+        (
+            [1, 2, 3, 4, 5, 6, 7, 8, 10],
+            4,
+            [[1, 5, 10], [2, 6], [3, 7], [4, 8]],
+        ),
+        (
+            [1, 2, 3, 4, 5, 6, 7, 8, 10],
+            6,
+            [[1, 7], [2, 8], [3, 10], [4], [5], [6]],
+        ),
+        (
+            [1, 2, 3, 4, 5, 6, 7, 8, 10],
+            8,
+            [[1, 10], [2], [3], [4], [5], [6], [7], [8]],
+        ),
+        (
+            [1, 2, 3, 4, 5, 6, 7, 8, 10],
+            10,
+            [[1], [2], [3], [4], [5], [6], [7], [8], [10], []],
+        ),
+        (
+            [1, 2, 3, 4, 5, 6, 7, 8, 10],
+            5,
+            [[1, 6], [2, 7], [3, 8], [4, 10], [5]],
+        ),
+    ),
+)
+def test_split_list_in_chunks(elements, chunk_size, expected):
+    assert (
+        list(
+            utils.split_list_in_chunks(
+                elements=elements,
+                chunk_size=chunk_size,
+            ),
+        )
+        == expected
+    )

@@ -34,3 +34,11 @@ cd dismod
 dismod dismod
 ls renders
 ```
+
+# Generate graphviz visualizatio
+
+If you want to generate a graphviz from the dotfiles, you can do so by using the following command:
+
+```bash
+dot -T png renders/<file-you-want>.py.dot -o output.png
+```

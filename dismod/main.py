@@ -22,6 +22,12 @@ def create_argument_parser() -> argparse.ArgumentParser:
         type=str,
         help="The path to the source code in your project.",
     )
+    parser.add_argument(
+        "--split-files",
+        action="store_true",
+        default=True,
+        help="Render the output as split files",
+    )
 
     return parser
 
@@ -58,7 +64,9 @@ def main() -> int:
     # Get a list of import dependencies for each file
     list_of_import_dependencies = get_import_dependency_list(files=files)
 
-    # Render the results
-    render_multiple_files(dependency_containers=list_of_import_dependencies)
+    render_multiple_files(
+        project_name=args.filepath,
+        dependency_containers=list_of_import_dependencies,
+    )
 
     return 0
