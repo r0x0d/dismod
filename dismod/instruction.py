@@ -73,15 +73,9 @@ def _check_import_from_statement(
     """ """
     return (
         (current == 109 and following == 109)
-        or (
-            current == 84 and previous == 108
-        )
-        or (
-            current == 109 and previous == 108
-        )
-    ) or (
-        current == 109 and following is None
-    )
+        or (current == 84 and previous == 108)
+        or (current == 109 and previous == 108)
+    ) or (current == 109 and following is None)
 
 
 def _check_single_import_statement(current: int, following: int) -> bool:
