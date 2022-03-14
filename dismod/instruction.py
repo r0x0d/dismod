@@ -75,13 +75,13 @@ def _check_import_from_statement(
         (current == 109 and following == 109)
         or (
             current == 84 and previous == 108
-        )  # lgtm [py/redundant-comparison]
+        )
         or (
             current == 109 and previous == 108
-        )  # lgtm [py/redundant-comparison]
+        )
     ) or (
         current == 109 and following is None
-    )  # lgtm [py/redundant-comparison]
+    )
 
 
 def _check_single_import_statement(current: int, following: int) -> bool:
