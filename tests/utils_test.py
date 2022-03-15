@@ -8,24 +8,54 @@ from dismod import utils
 
 @pytest.mark.skipif(sys.platform == "win32", reason="Unix specific test")
 @pytest.mark.parametrize(
-    ("filepath", "filepath_walk", "expected"),
+    ("filepath", "filepath_walk", "ignore_folder", "expected"),
     (
         (
             "test",
             [("test", [], ["test.py", "test2.py", "test_not_py.txt"])],
+            None,
             ["test/test.py", "test/test2.py"],
         ),
-        ("test", [("test", [], ["test_not_py.txt"])], []),
-        ("test", [], []),
+        ("test", [("test", [], ["test_not_py.txt"])], None, []),
+        ("test", [], None, []),
+        (
+            "test",
+            [("test", ["ignore_folder"], ["test_py.py"])],
+            "ignore_folder",
+            ["test/test_py.py"],
+        ),
+        (
+            "test",
+            [
+                (
+                    "test",
+                    ["ignore_folder", "good_folder"],
+                    ["test_py.py", "good_folder/test2.py"],
+                ),
+            ],
+            "ignore_folder",
+            ["test/test_py.py", "test/good_folder/test2.py"],
+        ),
     ),
 )
-def test_collect_files_in_module(filepath, filepath_walk, expected):
+def test_collect_files_in_module(
+    filepath,
+    filepath_walk,
+    ignore_folder,
+    expected,
+):
     with mock.patch.object(
         utils.os,
         "walk",
         return_value=filepath_walk,
     ) as os_walk_mock:
-        assert utils.collect_files_in_module(filepath=filepath) == expected
+        assert (
+            utils.collect_files_in_module(
+                filepath=filepath,
+                ignore_folder=ignore_folder,
+            )
+            == expected
+        )
         assert os_walk_mock.called
         assert os_walk_mock.call_count == 1
 
@@ -35,24 +65,54 @@ def test_collect_files_in_module(filepath, filepath_walk, expected):
     reason="Windows specific test",
 )
 @pytest.mark.parametrize(
-    ("filepath", "filepath_walk", "expected"),
+    ("filepath", "filepath_walk", "ignore_folder", "expected"),
     (
         (
             "test",
             [("test", [], ["test.py", "test2.py", "test_not_py.txt"])],
+            None,
             ["test\\test.py", "test\\test2.py"],
         ),
-        ("test", [("test", [], ["test_not_py.txt"])], []),
-        ("test", [], []),
+        ("test", [("test", [], ["test_not_py.txt"])], None, []),
+        ("test", [], None, []),
+        (
+            "test",
+            [("test", ["ignore_folder"], ["test_py.py"])],
+            "ignore_folder",
+            ["test\\test_py.py"],
+        ),
+        (
+            "test",
+            [
+                (
+                    "test",
+                    ["ignore_folder", "good_folder"],
+                    ["test_py.py", "good_folder\\test2.py"],
+                ),
+            ],
+            "ignore_folder",
+            ["test\\test_py.py", "test\\good_folder\\test2.py"],
+        ),
     ),
 )
-def test_collect_files_in_module_win32(filepath, filepath_walk, expected):
+def test_collect_files_in_module_win32(
+    filepath,
+    filepath_walk,
+    ignore_folder,
+    expected,
+):
     with mock.patch.object(
         utils.os,
         "walk",
         return_value=filepath_walk,
     ) as os_walk_mock:
-        assert utils.collect_files_in_module(filepath=filepath) == expected
+        assert (
+            utils.collect_files_in_module(
+                filepath=filepath,
+                ignore_folder=ignore_folder,
+            )
+            == expected
+        )
         assert os_walk_mock.called
         assert os_walk_mock.call_count == 1
 

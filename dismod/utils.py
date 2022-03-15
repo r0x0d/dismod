@@ -6,10 +6,15 @@ from typing import List
 from typing import Tuple
 
 
-def collect_files_in_module(filepath: str) -> List[str]:
+def collect_files_in_module(filepath: str, ignore_folder: str) -> List[str]:
     """ """
     matches = []
-    for root, _, filenames in os.walk(filepath):
+    for root, dirs, filenames in os.walk(filepath):
+        [
+            dirs.remove(d)  # type: ignore
+            for d in list(dirs)
+            if ignore_folder and (d in ignore_folder)
+        ]
         for filename in fnmatch.filter(filenames, "*.py"):
             matches.append(os.path.join(root, filename))
 
