@@ -2,6 +2,7 @@ import argparse
 from typing import List
 
 from dismod.dependency import DependencyContainer
+from dismod.dot import render_cluster_files
 from dismod.dot import render_multiple_files
 from dismod.instruction import get_import_instructions
 from dismod.instruction import get_instructions_from_file
@@ -25,9 +26,10 @@ def create_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--split-files",
         action="store_true",
-        default=True,
+        default=False,
         help="Render the output as split files",
     )
+    parser.add_argument("--ignore-folder", help="Ignore a specific folder")
 
     return parser
 
@@ -60,13 +62,22 @@ def main() -> int:
     args = parser.parse_args()
 
     # Collect all files that lives in the specified filepath
-    files = collect_files_in_module(filepath=args.filepath)
+    files = collect_files_in_module(
+        filepath=args.filepath,
+        ignore_folder=args.ignore_folder,
+    )
     # Get a list of import dependencies for each file
     list_of_import_dependencies = get_import_dependency_list(files=files)
 
-    render_multiple_files(
-        project_name=args.filepath,
-        dependency_containers=list_of_import_dependencies,
-    )
+    if args.split_files:
+        render_multiple_files(
+            project_name=args.filepath,
+            dependency_containers=list_of_import_dependencies,
+        )
+    else:
+        render_cluster_files(
+            project_name=args.filepath,
+            dependency_containers=list_of_import_dependencies,
+        )
 
     return 0

@@ -1,3 +1,4 @@
+from collections import namedtuple
 from unittest import mock
 
 import pytest
@@ -36,18 +37,45 @@ def test_get_import_dependency_list(
         assert len(main.get_import_dependency_list(files)) == expected
 
 
-@mock.patch("dismod.main.create_argument_parser")
-@mock.patch("dismod.main.get_import_dependency_list")
-@mock.patch("dismod.main.render_multiple_files")
-@mock.patch("dismod.main.collect_files_in_module")
+@mock.patch.object(main, "get_import_dependency_list")
+@mock.patch.object(main, "render_multiple_files")
+@mock.patch.object(main, "render_cluster_files")
+@mock.patch.object(main, "collect_files_in_module")
+@pytest.mark.parametrize(
+    ("filepath", "split_files", "ignore_folder"),
+    (
+        ("test", False, None),
+        ("test", True, None),
+        ("test", True, "ignore_folder"),
+    ),
+)
 def test_main(
-    create_argument_parser_mock,
     get_import_dependency_list_mock,
+    render_cluster_files_mock,
     render_multiple_files_mock,
     collect_files_in_module_mock,
+    filepath,
+    split_files,
+    ignore_folder,
 ):
-    assert main.main() == 0
-    assert create_argument_parser_mock.called == 1
-    assert get_import_dependency_list_mock.called == 1
-    assert render_multiple_files_mock.called == 1
-    assert collect_files_in_module_mock.called == 1
+
+    with mock.patch.object(
+        main.argparse,
+        "ArgumentParser",
+    ) as argument_parser_mock:
+        argument_parser_mock.return_value.parse_args.return_value = namedtuple(
+            "ArgumentParser",
+            ["filepath", "split_files", "ignore_folder"],
+        )(
+            filepath,
+            split_files,
+            ignore_folder,
+        )
+        assert main.main() == 0
+        assert get_import_dependency_list_mock.call_count == 1
+        assert collect_files_in_module_mock.call_count == 1
+
+        if split_files:
+            assert render_multiple_files_mock.called == 1
+        else:
+            assert render_cluster_files_mock.call_count == 1
