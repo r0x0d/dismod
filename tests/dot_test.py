@@ -40,7 +40,7 @@ def test_render_multiple_files(
     ):
         dependency_container = DependencyContainer(filepath=filepath)
         dependency_container.add_import(imports)
-        dot.render_multiple_files("test", [dependency_container])
+        dot.render_multiple_files("test", [dependency_container], "dot")
 
 
 @mock.patch.object(dot.os, "mkdir")
@@ -77,4 +77,4 @@ def test_render_cluster_files(
     ):
         dependency_container = DependencyContainer(filepath=filepath)
         dependency_container.add_import(imports)
-        dot.render_cluster_files("test", [dependency_container])
+        dot.render_cluster_files("test", [dependency_container], "dot")
