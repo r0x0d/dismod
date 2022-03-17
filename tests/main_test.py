@@ -42,11 +42,11 @@ def test_get_import_dependency_list(
 @mock.patch.object(main, "render_cluster_files")
 @mock.patch.object(main, "collect_files_in_module")
 @pytest.mark.parametrize(
-    ("filepath", "split_files", "ignore_folder"),
+    ("filepath", "split_files", "ignore_folder", "engine"),
     (
-        ("test", False, None),
-        ("test", True, None),
-        ("test", True, "ignore_folder"),
+        ("test", False, None, "sfdp"),
+        ("test", True, None, "sfdp"),
+        ("test", True, "ignore_folder", "sfdp"),
     ),
 )
 def test_main(
@@ -57,6 +57,7 @@ def test_main(
     filepath,
     split_files,
     ignore_folder,
+    engine,
 ):
 
     with mock.patch.object(
@@ -65,12 +66,8 @@ def test_main(
     ) as argument_parser_mock:
         argument_parser_mock.return_value.parse_args.return_value = namedtuple(
             "ArgumentParser",
-            ["filepath", "split_files", "ignore_folder"],
-        )(
-            filepath,
-            split_files,
-            ignore_folder,
-        )
+            ["filepath", "split_files", "ignore_folder", "engine"],
+        )(filepath, split_files, ignore_folder, engine)
         assert main.main() == 0
         assert get_import_dependency_list_mock.call_count == 1
         assert collect_files_in_module_mock.call_count == 1

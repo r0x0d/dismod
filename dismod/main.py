@@ -30,6 +30,11 @@ def create_argument_parser() -> argparse.ArgumentParser:
         help="Render the output as split files",
     )
     parser.add_argument("--ignore-folder", help="Ignore a specific folder")
+    parser.add_argument(
+        "--engine",
+        default="sfdp",
+        help="Change the engine used in the digraph",
+    )
 
     return parser
 
@@ -73,11 +78,13 @@ def main() -> int:
         render_multiple_files(
             project_name=args.filepath,
             dependency_containers=list_of_import_dependencies,
+            engine=args.engine,
         )
     else:
         render_cluster_files(
             project_name=args.filepath,
             dependency_containers=list_of_import_dependencies,
+            engine=args.engine,
         )
 
     return 0

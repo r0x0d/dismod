@@ -12,7 +12,7 @@ _CLUSTER_DOT_SUBGRAPH_TEMPLATE = """
 
 CLUSTER_DOT_TEMPLATE = """
 digraph "%s" {
-    graph [compound=true engine=sfdp];
+    graph [compound=true engine=%s];
 
     %s
 }
@@ -20,7 +20,7 @@ digraph "%s" {
 
 DOT_TEMPLATE = """
 digraph "%s" {
-    graph [compound=true engine=sfdp];
+    graph [compound=true engine=%s];
     %s
 }
 """
@@ -29,6 +29,7 @@ digraph "%s" {
 def render_cluster_files(
     project_name: str,
     dependency_containers: List[DependencyContainer],
+    engine: str,
 ) -> None:
     """ """
     if not os.path.exists("renders"):
@@ -62,13 +63,15 @@ def render_cluster_files(
         subgraphs += subgraph
 
     with open(f"renders/{project_name}.dot", mode="w") as file:
-        file.write(CLUSTER_DOT_TEMPLATE % (project_name, subgraphs))
+        file.write(CLUSTER_DOT_TEMPLATE % (project_name, engine, subgraphs))
 
 
 def render_multiple_files(
     project_name: str,
     dependency_containers: List[DependencyContainer],
+    engine: str,
 ) -> None:
+    """ """
     if not os.path.exists("renders"):
         os.mkdir("renders")
 
@@ -90,4 +93,4 @@ def render_multiple_files(
 """
 
         with open(f"renders/{dependency.basename}.dot", mode="w") as file:
-            file.write(DOT_TEMPLATE % (project_name, content))
+            file.write(DOT_TEMPLATE % (project_name, engine, content))
