@@ -35,7 +35,7 @@ dismod dismod
 ls renders
 ```
 
-# Generate graphviz visualizatio
+# Generate graphviz visualization
 
 If you want to generate a graphviz from the dotfiles, you can do so by using the following command:
 
