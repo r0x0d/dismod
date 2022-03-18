@@ -3,94 +3,162 @@ from typing import List
 
 from dismod.dependency import DependencyContainer
 
-_CLUSTER_DOT_SUBGRAPH_TEMPLATE = """
-    subgraph "%s" {
-        %s
-        label = "%s";
-    }
-"""
-
-CLUSTER_DOT_TEMPLATE = """
-digraph "%s" {
-    graph [compound=true engine=%s];
-
-    %s
-}
-"""
-
 DOT_TEMPLATE = """
 digraph "%s" {
-    graph [compound=true engine=%s];
-    %s
-}
+    graph [
+        rankdir="%s",
+        overlap="%s",
+        ratio="%s",
+        fontsize="%s",
+        dpi="%s",
+    ];
+    node [
+        fontsize="%s"
+        shape="%s"
+        fontname="%s"
+    ];
+
+    %s}
 """
 
 
-def render_cluster_files(
+def render(
     project_name: str,
     dependency_containers: List[DependencyContainer],
-    engine: str,
+    rankdir: str,
+    overlap: str,
+    ratio: str,
+    fontsize: str,
+    dpi: str,
+    shape: str,
+    fontname: str,
+    split_files: bool,
 ) -> None:
-    """ """
     if not os.path.exists("renders"):
         os.mkdir("renders")
 
-    subgraphs = ""
-
-    for dependency in dependency_containers:
-        content = ""
-        for _import in dependency.imports:
-            basename = dependency.basename.rsplit(".", 1)[0]
-            if _import["from_statement"] is None:
-                content += f"""
-\t"{basename}" -> "{_import["import_statements"][0]}";
-"""
-
-            if _import["from_statement"] is not None:
-                content += f"""
-\t"{basename}" -> "{_import["from_statement"]}";
-"""
-                for statement in _import["import_statements"]:
-                    content += f"""
-\t"{_import["from_statement"]}" -> "{statement}";
-"""
-        subgraph = _CLUSTER_DOT_SUBGRAPH_TEMPLATE % (
-            basename,
-            content,
-            dependency.basename,
+    if split_files:
+        _render_multiple_files(
+            project_name=project_name,
+            dependency_containers=dependency_containers,
+            rankdir=rankdir,
+            overlap=overlap,
+            ratio=ratio,
+            fontsize=fontsize,
+            dpi=dpi,
+            shape=shape,
+            fontname=fontname,
+        )
+    else:
+        _render_cluster_files(
+            project_name=project_name,
+            dependency_containers=dependency_containers,
+            rankdir=rankdir,
+            overlap=overlap,
+            ratio=ratio,
+            fontsize=fontsize,
+            dpi=dpi,
+            shape=shape,
+            fontname=fontname,
         )
 
-        subgraphs += subgraph
 
-    with open(f"renders/{project_name}.dot", mode="w") as file:
-        file.write(CLUSTER_DOT_TEMPLATE % (project_name, engine, subgraphs))
-
-
-def render_multiple_files(
+def _render_cluster_files(
     project_name: str,
     dependency_containers: List[DependencyContainer],
-    engine: str,
+    rankdir: str,
+    overlap: str,
+    ratio: str,
+    fontsize: str,
+    dpi: str,
+    shape: str,
+    fontname: str,
 ) -> None:
     """ """
-    if not os.path.exists("renders"):
-        os.mkdir("renders")
+    # Dirty hack to prevent a \t in the first edge
+    edges = """
+"""
 
     for dependency in dependency_containers:
-        content = ""
         for _import in dependency.imports:
-            if _import["from_statement"] is None:
-                content += f"""
-\t"{dependency.basename}" -> "{_import["import_statements"][0]}"
-"""
-
+            basename = dependency.basename.rsplit(".", 1)[0]
             if _import["from_statement"] is not None:
-                content += f"""
-\t"{dependency.basename}" -> "{_import["from_statement"]}"
-"""
-                for statement in _import["import_statements"]:
-                    content += f"""
-\t"{_import["from_statement"]}" -> "{statement}"
-"""
+                edges += f'\t"{basename}" -> "{_import["from_statement"]}";\n'
 
-        with open(f"renders/{dependency.basename}.dot", mode="w") as file:
-            file.write(DOT_TEMPLATE % (project_name, engine, content))
+            from_statement = (
+                _import["from_statement"]
+                if _import["from_statement"]
+                else basename
+            )
+
+            edges += '\t"{}" -> {{"{}"}};\n'.format(
+                from_statement,
+                '","'.join(_import["import_statements"]),
+            )
+
+    with open(f"renders/{project_name}.dot", mode="w") as file:
+        file.write(
+            DOT_TEMPLATE
+            % (
+                project_name,
+                rankdir,
+                overlap,
+                ratio,
+                fontsize,
+                dpi,
+                fontsize,
+                shape,
+                fontname,
+                edges,
+            ),
+        )
+
+
+def _render_multiple_files(
+    project_name: str,
+    dependency_containers: List[DependencyContainer],
+    rankdir: str,
+    overlap: str,
+    ratio: str,
+    fontsize: str,
+    dpi: str,
+    shape: str,
+    fontname: str,
+) -> None:
+    """ """
+    for dependency in dependency_containers:
+        # Dirty hack to prevent a \t in the first edge
+        edges = """
+"""
+        for _import in dependency.imports:
+            basename = dependency.basename.rsplit(".", 1)[0]
+            if _import["from_statement"] is not None:
+                edges += f'\t"{basename}" -> "{_import["from_statement"]}";\n'
+
+            from_statement = (
+                _import["from_statement"]
+                if _import["from_statement"]
+                else basename
+            )
+
+            edges += '\t"{}" -> {{"{}"}};\n'.format(
+                from_statement,
+                '","'.join(_import["import_statements"]),
+            )
+
+        with open(f"renders/{basename}.dot", mode="w") as file:
+            file.write(
+                DOT_TEMPLATE
+                % (
+                    project_name,
+                    rankdir,
+                    overlap,
+                    ratio,
+                    fontsize,
+                    dpi,
+                    fontsize,
+                    shape,
+                    fontname,
+                    edges,
+                ),
+            )
