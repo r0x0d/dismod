@@ -38,26 +38,74 @@ def test_get_import_dependency_list(
 
 
 @mock.patch.object(main, "get_import_dependency_list")
-@mock.patch.object(main, "render_multiple_files")
-@mock.patch.object(main, "render_cluster_files")
+@mock.patch.object(main, "render")
 @mock.patch.object(main, "collect_files_in_module")
 @pytest.mark.parametrize(
-    ("filepath", "split_files", "ignore_folder", "engine"),
     (
-        ("test", False, None, "sfdp"),
-        ("test", True, None, "sfdp"),
-        ("test", True, "ignore_folder", "sfdp"),
+        "filepath",
+        "split_files",
+        "ignore_folder",
+        "rankdir",
+        "overlap",
+        "ratio",
+        "fontsize",
+        "dpi",
+        "shape",
+        "fontname",
+    ),
+    (
+        (
+            "test",
+            False,
+            None,
+            "LR",
+            "scale",
+            "fill",
+            "16",
+            "150",
+            "rectangle",
+            "Consolas",
+        ),
+        (
+            "test",
+            True,
+            None,
+            "LR",
+            "scale",
+            "fill",
+            "16",
+            "150",
+            "rectangle",
+            "Consolas",
+        ),
+        (
+            "test",
+            True,
+            "ignore_folder",
+            "LR",
+            "scale",
+            "fill",
+            "16",
+            "150",
+            "rectangle",
+            "Consolas",
+        ),
     ),
 )
 def test_main(
     get_import_dependency_list_mock,
-    render_cluster_files_mock,
-    render_multiple_files_mock,
+    render_mock,
     collect_files_in_module_mock,
     filepath,
     split_files,
     ignore_folder,
-    engine,
+    rankdir,
+    overlap,
+    ratio,
+    fontsize,
+    dpi,
+    shape,
+    fontname,
 ):
 
     with mock.patch.object(
@@ -66,13 +114,31 @@ def test_main(
     ) as argument_parser_mock:
         argument_parser_mock.return_value.parse_args.return_value = namedtuple(
             "ArgumentParser",
-            ["filepath", "split_files", "ignore_folder", "engine"],
-        )(filepath, split_files, ignore_folder, engine)
+            [
+                "filepath",
+                "split_files",
+                "ignore_folder",
+                "rankdir",
+                "overlap",
+                "ratio",
+                "fontsize",
+                "dpi",
+                "shape",
+                "fontname",
+            ],
+        )(
+            filepath,
+            split_files,
+            ignore_folder,
+            rankdir,
+            overlap,
+            ratio,
+            fontsize,
+            dpi,
+            shape,
+            fontname,
+        )
         assert main.main() == 0
         assert get_import_dependency_list_mock.call_count == 1
         assert collect_files_in_module_mock.call_count == 1
-
-        if split_files:
-            assert render_multiple_files_mock.called == 1
-        else:
-            assert render_cluster_files_mock.call_count == 1
+        assert render_mock.call_count == 1

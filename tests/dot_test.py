@@ -8,12 +8,38 @@ from dismod.dependency import DependencyContainer
 
 @mock.patch.object(dot.os, "mkdir")
 @pytest.mark.parametrize(
-    ("filepath", "imports", "renders_dir_exists"),
+    ("split_files", "renders_dir_exists"),
+    (
+        (True, True),
+        (False, False),
+    ),
+)
+def test_render(os_mkdir_mock, split_files, renders_dir_exists):
+    with mock.patch.object(dot, "open"), mock.patch.object(
+        dot.os.path,
+        "exists",
+        return_value=renders_dir_exists,
+    ):
+        dot.render(
+            project_name="test",
+            dependency_containers=[],
+            rankdir="test",
+            overlap="test",
+            ratio="test",
+            fontsize="16",
+            dpi="150",
+            shape="test",
+            fontname="test",
+            split_files=split_files,
+        )
+
+
+@pytest.mark.parametrize(
+    ("filepath", "imports"),
     (
         (
             "test/test.py",
             [{"from_statement": None, "import_statements": ["os"]}],
-            True,
         ),
         (
             "test/test.py",
@@ -23,34 +49,35 @@ from dismod.dependency import DependencyContainer
                     "import_statements": ["path", "abspath"],
                 },
             ],
-            False,
         ),
     ),
 )
 def test_render_multiple_files(
-    os_mkdir_mock,
     filepath,
     imports,
-    renders_dir_exists,
 ):
-    with mock.patch.object(dot, "open"), mock.patch.object(
-        dot.os.path,
-        "exists",
-        return_value=renders_dir_exists,
-    ):
+    with mock.patch.object(dot, "open"):
         dependency_container = DependencyContainer(filepath=filepath)
         dependency_container.add_import(imports)
-        dot.render_multiple_files("test", [dependency_container], "dot")
+        dot._render_multiple_files(
+            "test",
+            [dependency_container],
+            "LR",
+            "scale",
+            "fill",
+            "16",
+            "150",
+            "rectangle",
+            "Consolas",
+        )
 
 
-@mock.patch.object(dot.os, "mkdir")
 @pytest.mark.parametrize(
-    ("filepath", "imports", "renders_dir_exists"),
+    ("filepath", "imports"),
     (
         (
             "test/test.py",
             [{"from_statement": None, "import_statements": ["os"]}],
-            True,
         ),
         (
             "test/test.py",
@@ -60,21 +87,24 @@ def test_render_multiple_files(
                     "import_statements": ["path", "abspath"],
                 },
             ],
-            False,
         ),
     ),
 )
 def test_render_cluster_files(
-    os_mkdir_mock,
     filepath,
     imports,
-    renders_dir_exists,
 ):
-    with mock.patch.object(dot, "open"), mock.patch.object(
-        dot.os.path,
-        "exists",
-        return_value=renders_dir_exists,
-    ):
+    with mock.patch.object(dot, "open"):
         dependency_container = DependencyContainer(filepath=filepath)
         dependency_container.add_import(imports)
-        dot.render_cluster_files("test", [dependency_container], "dot")
+        dot._render_cluster_files(
+            "test",
+            [dependency_container],
+            "LR",
+            "scale",
+            "fill",
+            "16",
+            "150",
+            "rectangle",
+            "Consolas",
+        )

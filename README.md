@@ -42,3 +42,7 @@ If you want to generate a graphviz from the dotfiles, you can do so by using the
 ```bash
 dot -T png renders/<file-you-want>.py.dot -o output.png
 ```
+
+# Graph generated from this project
+
+[!dismod graph visualization](https://github.com/r0x0d/dismod/blob/main/docs/dismod.png)

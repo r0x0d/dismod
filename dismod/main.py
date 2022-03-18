@@ -2,8 +2,7 @@ import argparse
 from typing import List
 
 from dismod.dependency import DependencyContainer
-from dismod.dot import render_cluster_files
-from dismod.dot import render_multiple_files
+from dismod.dot import render
 from dismod.instruction import get_import_instructions
 from dismod.instruction import get_instructions_from_file
 from dismod.instruction import parse_instructions
@@ -31,11 +30,40 @@ def create_argument_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--ignore-folder", help="Ignore a specific folder")
     parser.add_argument(
-        "--engine",
-        default="sfdp",
-        help="Change the engine used in the digraph",
+        "--rankdir",
+        default="LR",
+        help="Sets the direction of the graph. See also: https://graphviz.org/docs/attrs/ratio/",  # noqa: E501
     )
-
+    parser.add_argument(
+        "--overlap",
+        default="scale",
+        help="Determine if and how node overlaps should be removed. See also: https://graphviz.org/docs/attrs/overlap/",  # noqa: E501
+    )
+    parser.add_argument(
+        "--ratio",
+        default="fill",
+        help="Sets the aspect ratio (drawing height/drawing width) for the drawing. See also: https://graphviz.org/docs/attrs/ratio/",  # noqa: E501
+    )
+    parser.add_argument(
+        "--fontsize",
+        default="16",
+        help="The size of the font to be used. See also: https://graphviz.org/docs/attrs/fontsize/",  # noqa: E501
+    )
+    parser.add_argument(
+        "--dpi",
+        default="150",
+        help="Specifies the expected number of pixels per inch on a display device. See also: https://graphviz.org/docs/attrs/dpi/",  # noqa: E501
+    )
+    parser.add_argument(
+        "--shape",
+        default="rectangle",
+        help="Sets the shape of a node. See also: https://graphviz.org/docs/attrs/shape/",  # noqa: E501
+    )
+    parser.add_argument(
+        "--fontname",
+        default="Consolas",
+        help="Font used for text. See also: https://graphviz.org/docs/attrs/fontname/",  # noqa: E501
+    )
     return parser
 
 
@@ -72,19 +100,19 @@ def main() -> int:
         ignore_folder=args.ignore_folder,
     )
     # Get a list of import dependencies for each file
-    list_of_import_dependencies = get_import_dependency_list(files=files)
+    list_of_dependencies = get_import_dependency_list(files=files)
 
-    if args.split_files:
-        render_multiple_files(
-            project_name=args.filepath,
-            dependency_containers=list_of_import_dependencies,
-            engine=args.engine,
-        )
-    else:
-        render_cluster_files(
-            project_name=args.filepath,
-            dependency_containers=list_of_import_dependencies,
-            engine=args.engine,
-        )
+    render(
+        project_name=args.filepath,
+        dependency_containers=list_of_dependencies,
+        rankdir=args.rankdir,
+        overlap=args.overlap,
+        ratio=args.ratio,
+        fontsize=args.fontsize,
+        dpi=args.dpi,
+        shape=args.shape,
+        fontname=args.fontname,
+        split_files=args.split_files,
+    )
 
     return 0
