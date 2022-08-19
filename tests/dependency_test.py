@@ -8,7 +8,7 @@ def test_dependency_container_initialize(filepath):
     dependency_container = DependencyContainer(filepath=filepath)
 
     assert dependency_container.filepath == filepath
-    assert dependency_container.basename == "test.py"
+    assert dependency_container.basename == "test.test.py"
 
 
 @pytest.mark.parametrize(
@@ -18,7 +18,7 @@ def test_dependency_container_initialize(filepath):
 def test_dependency_container_add_import(filepath, imports):
     dependency_container = DependencyContainer(filepath=filepath)
     assert dependency_container.filepath == filepath
-    assert dependency_container.basename == "test.py"
+    assert dependency_container.basename == "test.test.py"
 
     dependency_container.add_import(imports)
 

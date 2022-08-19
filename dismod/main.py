@@ -1,16 +1,18 @@
+from __future__ import annotations
+
 import argparse
-from typing import List
 
 from dismod.dependency import DependencyContainer
 from dismod.dot import render
-from dismod.instruction import get_import_instructions
-from dismod.instruction import get_instructions_from_file
-from dismod.instruction import parse_instructions
+from dismod.instruction import (
+    get_import_instructions,
+    get_instructions_from_file,
+    parse_instructions,
+)
 from dismod.utils import collect_files_in_module
 
 
 def create_argument_parser() -> argparse.ArgumentParser:
-    """ """
     parser = argparse.ArgumentParser(
         prog="dismod",
         description="Generate dependency graphs for your codebase.",
@@ -67,8 +69,7 @@ def create_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def get_import_dependency_list(files: List[str]) -> List[DependencyContainer]:
-    """ """
+def get_import_dependency_list(files: list[str]) -> list[DependencyContainer]:
     import_dependency_list = []
 
     for file in files:
@@ -90,7 +91,6 @@ def get_import_dependency_list(files: List[str]) -> List[DependencyContainer]:
 
 
 def main() -> int:
-    """ """
     parser = create_argument_parser()
     args = parser.parse_args()
 

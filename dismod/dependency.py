@@ -1,22 +1,19 @@
-import os
+from __future__ import annotations
+
 from typing import Any
-from typing import List
 
 
 class DependencyContainer:
     def __init__(self, filepath: str) -> None:
-        """ """
         self.filepath = filepath
         self.basename: str = self._parse_basename()
-        self.imports: List[Any] = []
+        self.imports: list[Any] = []
 
     def _parse_basename(self) -> str:
-        """ """
-        return os.path.basename(self.filepath)
+        return self.filepath.replace("/", ".").replace("\\", ".")
 
     def add_import(
         self,
-        imports: List[Any],
+        imports: list[Any],
     ) -> None:
-        """ """
         self.imports = imports

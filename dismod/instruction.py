@@ -1,18 +1,15 @@
-from dis import get_instructions
-from dis import Instruction
-from types import CodeType
-from typing import Dict
-from typing import List
-from typing import Sequence
-from typing import Union
+from __future__ import annotations
 
-from dismod.utils import neighborhood
-from dismod.utils import search_key_in_iterable
+from dis import Instruction, get_instructions
+from types import CodeType
+from typing import Sequence
+
+from dismod.utils import neighborhood, search_key_in_iterable
 
 
 def _extract_import_instructions(
-    instructions: List[Instruction],
-) -> List[Instruction]:
+    instructions: list[Instruction],
+) -> list[Instruction]:
     """ """
     import_instructions = []
     for instruction in instructions:
@@ -23,8 +20,8 @@ def _extract_import_instructions(
 
 
 def _convert_codeblocks_instructions(
-    instructions: List[Instruction],
-) -> List[Instruction]:
+    instructions: list[Instruction],
+) -> list[Instruction]:
     """ """
     converted_instructions = []
     for instruction in instructions:
@@ -40,7 +37,7 @@ def _convert_codeblocks_instructions(
     return converted_instructions
 
 
-def get_instructions_from_file(filepath: str) -> List[Instruction]:
+def get_instructions_from_file(filepath: str) -> list[Instruction]:
     contents = None
     with open(filepath) as file:
         contents = file.read()
@@ -49,8 +46,8 @@ def get_instructions_from_file(filepath: str) -> List[Instruction]:
 
 
 def get_import_instructions(
-    instructions: List[Instruction],
-) -> List[Instruction]:
+    instructions: list[Instruction],
+) -> list[Instruction]:
     normalized_codeblocks = _convert_codeblocks_instructions(
         instructions=instructions,
     )
@@ -68,7 +65,7 @@ def _check_from_statement(current: int, following: int) -> bool:
 def _check_import_from_statement(
     previous: int,
     current: int,
-    following: Union[int, None],
+    following: int | None,
 ) -> bool:
     """ """
     return (
@@ -86,11 +83,11 @@ def _check_single_import_statement(current: int, following: int) -> bool:
 
 
 def parse_instructions(
-    instructions: List[Instruction],
-) -> List[Dict[str, Union[Sequence[str], None]]]:
+    instructions: list[Instruction],
+) -> list[dict[str, Sequence[str] | None]]:
     """ """
     current_from_statement_name = ""
-    parsed_instructions: List[Dict[str, Union[Sequence[str], None]]] = []
+    parsed_instructions: list[dict[str, Sequence[str] | None]] = []
     for previous, current, following in neighborhood(iterable=instructions):
         # Try to handle from statements import name
         if following and _check_from_statement(

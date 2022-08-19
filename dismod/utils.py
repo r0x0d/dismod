@@ -1,12 +1,11 @@
+from __future__ import annotations
+
 import fnmatch
 import os
-from typing import Any
-from typing import Generator
-from typing import List
-from typing import Tuple
+from typing import Any, Generator
 
 
-def collect_files_in_module(filepath: str, ignore_folder: str) -> List[str]:
+def collect_files_in_module(filepath: str, ignore_folder: str) -> list[str]:
     """ """
     matches = []
     for root, dirs, filenames in os.walk(filepath):
@@ -22,7 +21,7 @@ def collect_files_in_module(filepath: str, ignore_folder: str) -> List[str]:
 
 
 def neighborhood(
-    iterable: List[Any],
+    iterable: list[Any],
 ) -> Generator[Any, Any, Any]:
     """ """
     if not iterable:
@@ -41,8 +40,8 @@ def neighborhood(
 def search_key_in_iterable(
     key: str,
     value: str,
-    iterable: List[Any],
-) -> Tuple[Any, ...]:
+    iterable: list[Any],
+) -> tuple[Any, ...]:
     """ """
     return tuple(
         next(
@@ -57,7 +56,7 @@ def search_key_in_iterable(
 
 
 def split_list_in_chunks(
-    elements: List[Any],
+    elements: list[Any],
     chunk_size: int,
 ) -> Generator[Any, Any, Any]:
     """Yield chunk_size number of striped chunks from elements."""

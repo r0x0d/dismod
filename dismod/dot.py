@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import os
-from typing import List
 
 from dismod.dependency import DependencyContainer
 
-DOT_TEMPLATE = """
+DOT_TEMPLATE = """\
 digraph "%s" {
     graph [
         rankdir="%s",
@@ -24,7 +25,7 @@ digraph "%s" {
 
 def render(
     project_name: str,
-    dependency_containers: List[DependencyContainer],
+    dependency_containers: list[DependencyContainer],
     rankdir: str,
     overlap: str,
     ratio: str,
@@ -65,7 +66,7 @@ def render(
 
 def _render_cluster_files(
     project_name: str,
-    dependency_containers: List[DependencyContainer],
+    dependency_containers: list[DependencyContainer],
     rankdir: str,
     overlap: str,
     ratio: str,
@@ -74,7 +75,6 @@ def _render_cluster_files(
     shape: str,
     fontname: str,
 ) -> None:
-    """ """
     # Dirty hack to prevent a \t in the first edge
     edges = """
 """
@@ -116,7 +116,7 @@ def _render_cluster_files(
 
 def _render_multiple_files(
     project_name: str,
-    dependency_containers: List[DependencyContainer],
+    dependency_containers: list[DependencyContainer],
     rankdir: str,
     overlap: str,
     ratio: str,
@@ -125,7 +125,6 @@ def _render_multiple_files(
     shape: str,
     fontname: str,
 ) -> None:
-    """ """
     for dependency in dependency_containers:
         # Dirty hack to prevent a \t in the first edge
         edges = """
@@ -143,7 +142,7 @@ def _render_multiple_files(
 
             edges += '\t"{}" -> {{"{}"}};\n'.format(
                 from_statement,
-                '","'.join(_import["import_statements"]),
+                '", "'.join(_import["import_statements"]),
             )
 
         with open(f"renders/{basename}.dot", mode="w") as file:
