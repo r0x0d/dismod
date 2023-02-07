@@ -107,7 +107,6 @@ def test_main(
     shape,
     fontname,
 ):
-
     with mock.patch.object(
         main.argparse,
         "ArgumentParser",
