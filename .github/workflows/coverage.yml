@@ -34,7 +34,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ${{ matrix.platform.pip_cache_path }}
           key: pip-${{ matrix.platform.name }}-python-${{ matrix.python.version }}-${{ hashFiles('**/requirements/*.txt') }}
